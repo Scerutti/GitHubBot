@@ -1,8 +1,12 @@
 import discord
 import os
 import requests
+from dotenv import load_dotenv
 
-client = discord.Client()
+load_dotenv()
+
+intents = discord.Intents.default()
+client = discord.Client(intents=intents)
 
 @client.event
 async def on_ready():
@@ -16,7 +20,7 @@ async def on_message(message):
     if message.content.startswith('!ping'):
         await message.channel.send('Pong!')
 
-GITHUB_TOKEN = os.environ.get('GITHUB_TOKEN');
+GITHUB_TOKEN = os.getenv('GITHUB_TOKEN');
 
 @client.event
 async def on_github_event(payload):
@@ -25,7 +29,7 @@ async def on_github_event(payload):
         await send_pr_notification(repo_name)
 
 async def send_pr_notification(repo_name):
-    webhook_url = os.environ.get("WEBHOOK_DISCORD");
+    webhook_url = os.getenv("WEBHOOK_DISCORD");
 
     message = f"Se ha creado una nueva Pull Request en el repositorio {repo_name}"
     
@@ -44,5 +48,5 @@ async def send_pr_notification(repo_name):
     else:
         print(f"Error al enviar la notificación: {response.status_code} - {response.text}")
 
-TOKEN = os.environ.get('DISCORD_BOT_TOKEN');
+TOKEN = os.getenv('DISCORD_BOT_TOKEN');
 client.run(TOKEN)
